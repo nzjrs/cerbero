@@ -18,7 +18,7 @@
 
 import os
 
-from cerbero.config import Config, DEFAULT_HOME, Platform, DistroVersion
+from cerbero.config import Config, DEFAULT_HOME, Platform, DistroVersion, Distro
 from cerbero.bootstrap import BootstrapperBase
 from cerbero.build.oven import Oven
 from cerbero.build.cookbook import CookBook
@@ -45,6 +45,8 @@ class BuildTools (BootstrapperBase):
         if self.config.platform == Platform.WINDOWS:
             self.BUILD_TOOLS.remove('m4')
             self.BUILD_TOOLS.append('gperf')
+            if config.distro == Distro.WINDOWS_BINARY:
+                self.BUILD_TOOLS = ['pkg-config']
         if self.config.platform == Platform.DARWIN:
             self.BUILD_TOOLS.append('gperf')
             self.BUILD_TOOLS.insert(0, 'tar')

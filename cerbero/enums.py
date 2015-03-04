@@ -52,6 +52,7 @@ class Distro:
     IOS = 'ios'
     ANDROID = 'android'
     NONE = 'none'
+    WINDOWS_BINARY = 'windows_binary'
 
 
 class DistroVersion:

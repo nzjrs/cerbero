@@ -38,7 +38,36 @@ MINGWGET_DEPS = ['msys-wget']
 GNOME_FTP = 'http://ftp.gnome.org/pub/gnome/binaries/win32/'
 WINDOWS_BIN_DEPS = ['intltool/0.40/intltool_0.40.4-1_win32.zip']
 
+class WindowsBinaryBootstrapper(BootstrapperBase):
 
+    def start(self):
+        if not git.check_line_endings(self.config.platform):
+            raise ConfigurationError("git is configured to use automatic line "
+                    "endings conversion. You can fix it running:\n"
+                    "$git config core.autocrlf false")
+        self.prefix = self.config.toolchain_prefix
+        self.platform = self.config.target_platform
+        self.arch = self.config.target_arch
+        if self.arch == Architecture.X86:
+            self.version = 'w32'
+        else:
+            self.version = 'w64'
+        self.platform = self.config.platform
+
+        self.check_dirs()
+        if self.platform == Platform.WINDOWS:
+            self.install_msys_packages()
+
+    def check_dirs(self):
+        if not os.path.exists(self.prefix):
+            os.makedirs(self.prefix)
+        etc_path = os.path.join(self.config.prefix, 'etc')
+        if not os.path.exists(etc_path):
+            os.makedirs(etc_path)
+
+    def install_msys_packages(self):
+        for dep in self.MINGW_PACKAGES:
+            shell.call('mingw-get install %s' % dep)
 class WindowsBootstrapper(BootstrapperBase):
     '''
     Bootstrapper for windows builds.
